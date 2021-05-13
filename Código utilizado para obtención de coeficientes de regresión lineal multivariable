@@ -1,0 +1,80 @@
+% Se carga la tabla de MATLAB
+load base_model_944
+
+% Se pasan los datos de la tabla a los vectores de las variables
+y=table2array(basemodel944(:,1));
+x1=table2array(basemodel944(:,2));
+x2=table2array(basemodel944(:,3));
+x3=table2array(basemodel944(:,4));
+x4=table2array(basemodel944(:,5));
+x5=table2array(basemodel944(:,6));
+x6=table2array(basemodel944(:,7));
+x7=table2array(basemodel944(:,8));
+x8=table2array(basemodel944(:,9));
+x9=table2array(basemodel944(:,10));
+x10=table2array(basemodel944(:,11));
+x11=table2array(basemodel944(:,12));
+x12=table2array(basemodel944(:,13));
+x13=table2array(basemodel944(:,14));
+x14=table2array(basemodel944(:,15));
+x15=table2array(basemodel944(:,16));
+x16=table2array(basemodel944(:,17));
+x17=table2array(basemodel944(:,18));
+x18=table2array(basemodel944(:,19));
+x19=table2array(basemodel944(:,20));
+x20=table2array(basemodel944(:,21));
+x21=table2array(basemodel944(:,22));
+x22=table2array(basemodel944(:,23));
+x23=table2array(basemodel944(:,24));
+x24=table2array(basemodel944(:,25));
+x25=table2array(basemodel944(:,26));
+x26=table2array(basemodel944(:,27));
+x27=table2array(basemodel944(:,28));
+
+
+% Se guardan los vectores variables en matriz
+X1=[ones(size(x1)) x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14  x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 ];
+X2=[ones(size(x1)) x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14  x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27];
+
+% Se utiliza la funcion de regresion de MATLAB
+[b1,bint1,r1,rint1,stats1] =regress(y,X1);
+[b2,bint2,r2,rint2,stats2] =regress(y,X2);
+
+% Se imprimen los resultados en archivos de texto
+fid1 = fopen('Resultados1.txt','wt');
+    fprintf(fid1,'%6s \t\t','Índice Coef');
+    fprintf(fid1,'%6s \t\t','Coeficientes');
+    fprintf(fid1,'%6s \n','R^2');
+    
+for ii = 1:size(b1,1)
+    if ii==1 
+    fprintf(fid1,'%g\t\t\t\t  ',ii-1,b1(ii,:),stats1(1));
+    fprintf(fid1,'\n');
+    else
+    fprintf(fid1,'%g\t\t\t\t',ii-1,b1(ii,:));
+    fprintf(fid1,'\n');
+    
+    end
+    
+end
+
+fclose(fid1);
+
+fid2 = fopen('Resultados2.txt','wt');
+    fprintf(fid2,'%6s \t\t','Índice Coef');
+    fprintf(fid2,'%6s \t\t','Coeficientes');
+    fprintf(fid2,'%6s \n','R^2');
+    
+for ii = 1:size(b2,1)
+    if ii==1 
+    fprintf(fid2,'%g\t\t\t\t  ',ii-1,b2(ii,:),stats2(1));
+    fprintf(fid2,'\n');
+    else
+    fprintf(fid2,'%g\t\t\t\t',ii-1,b2(ii,:));
+    fprintf(fid2,'\n');
+    
+    end
+    
+end
+
+fclose(fid2);
