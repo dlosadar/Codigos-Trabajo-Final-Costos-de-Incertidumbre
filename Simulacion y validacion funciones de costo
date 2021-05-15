@@ -1,0 +1,90 @@
+%Creación de vectores para resultados
+Error=zeros(25,1);
+ExpectedUncertaintyCost_Montecarlo=zeros(25,1);
+ExpectedUncertaintyCost_Analytical=zeros(25,1);
+
+
+tic
+%Inicio Algoritmo
+for k=1:25
+clc
+close all
+
+%Carga de datos estadísticos y de función de densidad edificio 944
+load("PDF944");
+load("datosfiltrados944");
+
+%Set de energía despachada, # de simulaciones, coeficientes de penalización
+% y energía máxima a despachar
+max944=max(datosfiltrados944);
+min944=min(datosfiltrados944);
+prom944=mean(datosfiltrados944);
+Ps=max944;
+Pmax=max944;
+N=10000;
+Cu=300;
+Co=700;
+
+ii=1;
+iii=1;
+nocost=0;
+CO=[]; CU=[]; Pe=[];
+i=1;
+
+%Simulación de Montecarlo con PDF de edificio 944
+while i<=N
+Pe(i)=random(PDF944);
+if Ps>Pe(i)
+CO(ii)=Co*(Ps-Pe(i));
+ii=ii+1;
+i=i+1;
+elseif Ps==Pe(i)
+ nocost=nocost+1;
+else
+CU(iii)=Cu*(Pe(i)-Ps);
+iii=iii+1;
+i=i+1;
+end
+end
+
+%Formación de vector de costos de incertidumbre por Montecarlo y
+%determinación valor medio a comparar
+CUCO=[CU CO];
+ExpectedUncertaintyCost_Montecarlo(k,1)=mean(CUCO);
+
+xo1=mean(CO);
+xu1=mean(CU);
+
+%Simulación funciones analíticas
+%Set de vector de datos estadísticos de edificio 944 y
+%ancho de banda h
+muj=datosfiltrados944;
+Nj12=size(muj);
+Nj=Nj12(1);
+h=PDF944.BandWidth;
+COA=zeros(Nj,1);
+CUA=zeros(Nj,1);
+
+%Cálculo sumatoria funciones analíticas
+for j=1:Nj
+    
+    COA(j,1)=(Co/(sqrt(2*pi)*Nj*h))*((h^2)*(exp(-(muj(j)-Ps)^2/(2*h^2))-exp(-(muj(j)^2)/(2*h^2)))+sqrt(pi/2)*h*muj(j)*(erf((muj(j)-Ps)/(sqrt(2)*h))-erf(muj(j)/(sqrt(2)*h)))-Ps*sqrt(pi/2)*h*(erf((muj(j)-Ps)/(sqrt(2)*h))-erf(muj(j)/(sqrt(2)*h))));
+    CUA(j,1)=(Cu/(sqrt(2*pi)*Nj*h))*(-(h^2)*(exp(-(muj(j)-Pmax)^2/(2*h^2))-exp(-((muj(j)-Ps)^2)/(2*h^2)))-sqrt(pi/2)*h*muj(j)*(erf((muj(j)-Pmax)/(sqrt(2)*h))-erf((muj(j)-Ps)/(sqrt(2)*h)))+Ps*sqrt(pi/2)*h*(erf((muj(j)-Pmax)/(sqrt(2)*h))-erf((muj(j)-Ps)/(sqrt(2)*h))));   
+    
+end
+
+COAT=sum(COA);
+CUAT=sum(CUA);
+
+%Formación de vector de costos de incertidumbre
+%por funciones analíticas
+ExpectedUncertaintyCost_Analytical(k,1)=COAT+CUAT;
+
+%Cálculo de error diferencial porcentual entre Montecarlo y 
+%funciones analíticas
+Error(k,1)=100*abs(-ExpectedUncertaintyCost_Analytical(k,1)+ExpectedUncertaintyCost_Montecarlo(k,1))/ExpectedUncertaintyCost_Montecarlo(k,1);
+
+end
+toc
+
+Resultados=[ExpectedUncertaintyCost_Analytical ExpectedUncertaintyCost_Montecarlo Error]
