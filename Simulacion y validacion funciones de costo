@@ -19,11 +19,11 @@ load("datosfiltrados944");
 max944=max(datosfiltrados944);
 min944=min(datosfiltrados944);
 prom944=mean(datosfiltrados944);
-Ps=max944;
+Psei=0;
 Pmax=max944;
 N=10000;
-Cu=300;
-Co=700;
+Cu=0.7;
+Co=0.5;
 
 ii=1;
 iii=1;
@@ -34,14 +34,14 @@ i=1;
 %Simulación de Montecarlo con PDF de edificio 944
 while i<=N
 Pe(i)=random(PDF944);
-if Ps>Pe(i)
-CO(ii)=Co*(Ps-Pe(i));
+if Psei>Pe(i)
+CO(ii)=Co*(Psei-Pe(i));
 ii=ii+1;
 i=i+1;
-elseif Ps==Pe(i)
+elseif Psei==Pe(i)
  nocost=nocost+1;
 else
-CU(iii)=Cu*(Pe(i)-Ps);
+CU(iii)=Cu*(Pe(i)-Psei);
 iii=iii+1;
 i=i+1;
 end
@@ -68,8 +68,8 @@ CUA=zeros(Nj,1);
 %Cálculo sumatoria funciones analíticas
 for j=1:Nj
     
-    COA(j,1)=(Co/(sqrt(2*pi)*Nj*h))*((h^2)*(exp(-(muj(j)-Ps)^2/(2*h^2))-exp(-(muj(j)^2)/(2*h^2)))+sqrt(pi/2)*h*muj(j)*(erf((muj(j)-Ps)/(sqrt(2)*h))-erf(muj(j)/(sqrt(2)*h)))-Ps*sqrt(pi/2)*h*(erf((muj(j)-Ps)/(sqrt(2)*h))-erf(muj(j)/(sqrt(2)*h))));
-    CUA(j,1)=(Cu/(sqrt(2*pi)*Nj*h))*(-(h^2)*(exp(-(muj(j)-Pmax)^2/(2*h^2))-exp(-((muj(j)-Ps)^2)/(2*h^2)))-sqrt(pi/2)*h*muj(j)*(erf((muj(j)-Pmax)/(sqrt(2)*h))-erf((muj(j)-Ps)/(sqrt(2)*h)))+Ps*sqrt(pi/2)*h*(erf((muj(j)-Pmax)/(sqrt(2)*h))-erf((muj(j)-Ps)/(sqrt(2)*h))));   
+    COA(j,1)=(Co/(sqrt(2*pi)*Nj*h))*((h^2)*(exp(-(muj(j)-Psei)^2/(2*h^2))-exp(-(muj(j)^2)/(2*h^2)))+sqrt(pi/2)*h*muj(j)*(erf((muj(j)-Psei)/(sqrt(2)*h))-erf(muj(j)/(sqrt(2)*h)))-Psei*sqrt(pi/2)*h*(erf((muj(j)-Psei)/(sqrt(2)*h))-erf(muj(j)/(sqrt(2)*h))));
+    CUA(j,1)=(Cu/(sqrt(2*pi)*Nj*h))*(-(h^2)*(exp(-(muj(j)-Pmax)^2/(2*h^2))-exp(-((muj(j)-Psei)^2)/(2*h^2)))-sqrt(pi/2)*h*muj(j)*(erf((muj(j)-Pmax)/(sqrt(2)*h))-erf((muj(j)-Psei)/(sqrt(2)*h)))+Psei*sqrt(pi/2)*h*(erf((muj(j)-Pmax)/(sqrt(2)*h))-erf((muj(j)-Psei)/(sqrt(2)*h))));   
     
 end
 
